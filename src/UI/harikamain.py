@@ -13,6 +13,8 @@ from openai import OpenAI
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader, TensorDataset
 
+import src.Agents.hafunctions as hafunctions
+
 #from src.Agents.functions import (RNNModel, calculate_indicators,
                                 #   extract_stock_symbol, forward_test,
                                 #   generate_prompt, get_stock_data,
@@ -64,8 +66,8 @@ def main():
         ticker = str(ticker).upper()
         
         # Load data
-        stock_data = get_stock_data(ticker)
-        x_data, y_data, scaler = prepare_data(stock_data)
+        stock_data = hafunctions.get_stock_data(ticker)
+        x_data, y_data, scaler = hafunctions.prepare_data(stock_data)
 
         # Split data into training and validation sets
         train_size = int(0.8 * len(x_data))
@@ -78,12 +80,12 @@ def main():
         val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
 
         # Define and train the model
-        model = RNNModel(input_size=x_train.shape[2]).to(device)
-        train_model(model, train_loader, val_loader)
+        model = hafunctions.RNNModel(input_size=x_train.shape[2]).to(device)
+        hafunctions.train_model(model, train_loader, val_loader)
 
         # Run forward test and generate prompt
-        predicted_price = forward_test(model, ticker)
-        prompt = generate_prompt(ticker, model, scaler)
+        predicted_price = hafunctions.forward_test(model, ticker)
+        prompt = hafunctions.generate_prompt(ticker, model, scaler)
         print(prompt)
 
                 # Define the Task for the Stock Analysis Agent
